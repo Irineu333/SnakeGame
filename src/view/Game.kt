@@ -23,9 +23,10 @@ class Game : Canvas(), Runnable, KeyListener {
 
     private val random = Random((0..maxOf(largura, altura)).shuffled().first())
 
-    private val nodeSnake = MutableList(1) { Node(0, 13) }
+    private val nodeSnake = MutableList(1) { Node(1, 13) }
     private val directions = Direction()
     private var speed = 1f
+    private var fps = 60
 
     var score = 0
     private val apple = Apple(random.nextInt(largura - 10), random.nextInt(13, altura - 10))
@@ -39,7 +40,7 @@ class Game : Canvas(), Runnable, KeyListener {
         while (true) {
             tick()
             render()
-            Thread.sleep(1000 / 60) //60fps
+            Thread.sleep(1000 / fps.toLong()) //frame por segundo
         }
     }
 
@@ -73,7 +74,7 @@ class Game : Canvas(), Runnable, KeyListener {
 
             //score
             graphics.color = Color.WHITE
-            graphics.drawString("Pontos: $score | Speed ${speed.toInt()}", 0, 10)
+            graphics.drawString("Pontos $score | Speed ${speed.toInt()} ${if(speed==10f) "limite" else ""} | $fps fps ${if(fps==120) "limite" else ""} ", 0, 10)
 
             graphics.dispose()
         }
@@ -84,26 +85,26 @@ class Game : Canvas(), Runnable, KeyListener {
 
         //todos os nodes seguem o primeiro
         for (index in nodeSnake.size.dec() downTo 1) {
-            nodeSnake[index].x = nodeSnake[index-1].x
-            nodeSnake[index].y = nodeSnake[index-1].y
+            nodeSnake[index].x = nodeSnake[index - 1].x
+            nodeSnake[index].y = nodeSnake[index - 1].y
         }
 
         //infinito x
-        if(nodeSnake[0].x + 10 < 0) {
+        if (nodeSnake[0].x + 10 < 0) {
             nodeSnake[0].x = largura
-        } else if(nodeSnake[0].x > largura) {
+        } else if (nodeSnake[0].x > largura) {
             nodeSnake[0].x = 0
         }
 
         //infinito y
-        if(nodeSnake[0].y < 0) {
+        if (nodeSnake[0].y - 3 < 0) {
             nodeSnake[0].y = altura
-        } else if(nodeSnake[0].y > altura) {
-            nodeSnake[0].y = 13
+        } else if (nodeSnake[0].y > altura) {
+            nodeSnake[0].y = 10
         }
 
         //direções
-        when(directions.direction) {
+        when (directions.direction) {
             Direction.Directions.RIGHT -> nodeSnake[0].x += speed.toInt()
             Direction.Directions.LEFT -> nodeSnake[0].x -= speed.toInt()
             Direction.Directions.DOWN -> nodeSnake[0].y += speed.toInt()
@@ -115,17 +116,22 @@ class Game : Canvas(), Runnable, KeyListener {
         val node = Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10)
         val apple = Rectangle(this.apple.x, this.apple.y, 10, 10)
 
-        if(node.intersects(apple)) {
-            this.apple.x = random.nextInt(largura-10)
-            this.apple.y = random.nextInt(13, altura-10)
+        if (node.intersects(apple)) {
+            this.apple.x = random.nextInt(largura - 10)
+            this.apple.y = random.nextInt(13, altura - 10)
 
             //add nodes
-            val x = nodeSnake[nodeSnake.size-1].x
-            val y = nodeSnake[nodeSnake.size-1].y
+            val x = nodeSnake[nodeSnake.size - 1].x
+            val y = nodeSnake[nodeSnake.size - 1].y
             nodeSnake.addAll(Array(10) { Node(x, y) })
 
             score++
-            speed += .25f
+            if (speed < 10)
+                speed += .25f
+
+            if(speed > 5f)
+                fps = 120
+
             println("Pontos: $score")
         }
 
