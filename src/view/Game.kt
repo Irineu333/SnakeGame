@@ -111,12 +111,12 @@ class Game : Canvas(), Runnable, KeyListener {
             Direction.Directions.UP -> nodeSnake[0].y -= speed.toInt()
         }
 
-        //intersecção
+        val nodeRect = Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10)
 
-        val node = Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10)
-        val apple = Rectangle(this.apple.x, this.apple.y, 10, 10)
+        //intersecção com a maça
+        val appleRect = Rectangle(this.apple.x, this.apple.y, 10, 10)
 
-        if (node.intersects(apple)) {
+        if (nodeRect.intersects(appleRect)) {
             this.apple.x = random.nextInt(largura - 10)
             this.apple.y = random.nextInt(13, altura - 10)
 
