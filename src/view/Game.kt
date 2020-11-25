@@ -11,6 +11,11 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import kotlin.random.Random
 
+/**
+ * Toda a lógica do Jogo Snake
+ * @author Irineu A. Silva
+ */
+
 class Game : Canvas(), Runnable, KeyListener {
 
     private val altura = 410

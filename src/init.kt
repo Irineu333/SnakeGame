@@ -1,7 +1,12 @@
 import view.Game
 import view.MainWindow
 
-fun main() {
+/**
+ * Inicialização da Aplicação
+ * @author Irineu A. Silva
+ */
+
+fun main(args: Array<String>) {
     val game = Game()
 
     val window = MainWindow("SnakeNeo")
